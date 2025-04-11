@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MCQ Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+    tr.correct {
+      background-color: #d4edda;
+    }
+    tr.incorrect {
+      background-color: #f8d7da;
+    }
+    textarea {
+      width: 100%;
+      resize: vertical;
+    }
+    .selected-answer {
+      background-color: #d0e7ff !important;
+    }
+    .status-checkboxes {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>MCQ Tracker</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th colspan="5">Select Answer</th>
+        <th>Status</th>
+        <th>Reflection / Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Generate 50 rows dynamically -->
+      <script>
+        for (let i = 1; i <= 50; i++) {
+          document.write(`
+            <tr id="row-${i}">
+              <td>${i}</td>
+              <td class="option"><label><input type="radio" name="q${i}" value="A" onchange="highlightSelected(this)"> A</label></td>
+              <td class="option"><label><input type="radio" name="q${i}" value="B" onchange="highlightSelected(this)"> B</label></td>
+              <td class="option"><label><input type="radio" name="q${i}" value="C" onchange="highlightSelected(this)"> C</label></td>
+              <td class="option"><label><input type="radio" name="q${i}" value="D" onchange="highlightSelected(this)"> D</label></td>
+              <td class="option"><label><input type="radio" name="q${i}" value="E" onchange="highlightSelected(this)"> E</label></td>
+              <td class="status-checkboxes">
+                <label><input type="checkbox" id="correct-${i}" onclick="setStatus(${i}, 'correct')"> Correct</label>
+                <label><input type="checkbox" id="incorrect-${i}" onclick="setStatus(${i}, 'incorrect')"> Incorrect</label>
+              </td>
+              <td><textarea rows="2" placeholder="Reflection or notes..."></textarea></td>
+            </tr>
+          `);
+        }
+      </script>
+    </tbody>
+  </table>
+
+  <script>
+    function highlightSelected(radio) {
+      const cells = radio.closest("tr").querySelectorAll(".option");
+      cells.forEach(cell => cell.classList.remove("selected-answer"));
+      radio.closest("td").classList.add("selected-answer");
+    }
+
+    function setStatus(rowNum, status) {
+      const row = document.getElementById(`row-${rowNum}`);
+      const correctBox = document.getElementById(`correct-${rowNum}`);
+      const incorrectBox = document.getElementById(`incorrect-${rowNum}`);
+
+      // Uncheck the opposite checkbox
+      if (status === 'correct' && correctBox.checked) {
+        incorrectBox.checked = false;
+        row.classList.remove("incorrect");
+        row.classList.add("correct");
+      } else if (status === 'incorrect' && incorrectBox.checked) {
+        correctBox.checked = false;
+        row.classList.remove("correct");
+        row.classList.add("incorrect");
+      }
+
+      // If both are unchecked, remove row highlighting
+      if (!correctBox.checked && !incorrectBox.checked) {
+        row.classList.remove("correct", "incorrect");
+      }
+    }
+  </script>
+
+</body>
+</html>
